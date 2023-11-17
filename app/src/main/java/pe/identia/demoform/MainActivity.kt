@@ -2,6 +2,7 @@ package pe.identia.demoform
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -13,6 +14,8 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.text.isDigitsOnly
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -20,15 +23,16 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import pe.identia.flow.FlowActivity
 import java.io.IOException
+import android.Manifest
 
 class MainActivity : AppCompatActivity() {
 
+    private val REQUEST_CAMERA_PERMISSION = 1
     private val TAG = "MainActivity"
     private val baseUrl = "https://apifacialdev.identia.pe"
     private val httpClient = OkHttpClient()
     private lateinit var accessToken: String
     private lateinit var loadingFrameLayout: FrameLayout
-
     private lateinit var resultLauncher: ActivityResultLauncher<Intent>
 
 
@@ -36,6 +40,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            // Solicitar permiso de cámara
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
+        }
         // Initialize FrameLayout for ProgressBar
         loadingFrameLayout = findViewById(R.id.loadingFrameLayout)
 
@@ -44,8 +52,6 @@ class MainActivity : AppCompatActivity() {
             loadingFrameLayout.visibility = View.VISIBLE  // Show the FrameLayout with the ProgressBar
             issueAccessToken()
         }
-
-
         resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val response = result.data?.getStringExtra("response")
@@ -56,7 +62,19 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            REQUEST_CAMERA_PERMISSION -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permiso concedido
+                } else {
+                    // Permiso denegado
+                    Toast.makeText(this, "Camera permission is required", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -139,7 +157,7 @@ class MainActivity : AppCompatActivity() {
                     Log.d(TAG, "ID: $idIntent")
 
                     val intent = Intent(this@MainActivity, FlowActivity::class.java)
-                    intent.putExtra("idSession", idIntent);
+                    intent.putExtra("idSession", "5995a9d2b3c049e5bd46ee86298143a3.1703908358.105f98060db1b5ce9df07efc32e25c9d2b3d09bb2b017e6688e559d3b62d5f03");
                     intent.putExtra("endPoint", "https://apifacialdev.identia.pe/");
 
 
