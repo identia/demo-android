@@ -157,7 +157,7 @@ class MainActivity : AppCompatActivity() {
                     Log.d(TAG, "ID: $idIntent")
 
                     val intent = Intent(this@MainActivity, FlowActivity::class.java)
-                    intent.putExtra("idSession", "5995a9d2b3c049e5bd46ee86298143a3.1703908358.105f98060db1b5ce9df07efc32e25c9d2b3d09bb2b017e6688e559d3b62d5f03");
+                    intent.putExtra("idSession", idIntent);
                     intent.putExtra("endPoint", "https://apifacialdev.identia.pe/");
 
 
