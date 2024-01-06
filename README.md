@@ -12,7 +12,7 @@ Añade la dependencia y el repositorio maven en el archivo `build.gradle` de tu 
 
 ```kotlin
 dependencies {
-    implementation 'identia:flow:0.0.3'
+    implementation 'identia:flow:0.0.5'
 }
 
 repositories {
